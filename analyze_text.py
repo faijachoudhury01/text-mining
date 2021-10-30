@@ -2,11 +2,6 @@ import urllib.request
 import string
 
 
-# I am able to get the text but it's not the complete text.
-
-
-
-
 
 def skip_gutenberg_header(fp):
     """Reads from fp until it finds the line that ends the header.
@@ -62,11 +57,37 @@ def total_words(hist):
 
 def different_words(hist):
     """Returns the number of different words in a histogram."""
-    # Since we already created the list of words with their count. We can just count length of the list to find the differenc eof the words
+    # Since we already created the list of words with their count. We can just count length of the list to find the difference of the words
     return len(hist)
 
+def most_common (hist, excluding_stopwords= True):
+    ''' Find most common word of the text, excluding the stop words (is, are, the , and)'''
+
+    l= []
+
+    stop_words = process_file ('data/stop words.txt', False)
+    #print (stop_words)  to test   
+    stop_words = list(stop_words.keys())
+    #print (stop_words)
+
+    for word, frequency in hist.items(): # we need both the words and the frequency of the word to see which one have the most count
+        if excluding_stopwords:
+            if word in stop_words:
+                continue
+
+        l.append((word, frequency))
+
+    l.sort(reverse=True)
+    return l
 
 
+def print_most_common(hist, num=10):
+    """Prints the most commons words  using the function 'most_common'
+    """
+    t = most_common(hist)
+    print('The most common words are:')
+    for freq, word in t[:num]:
+        print(word, '\t', freq)
 
 
 def main():
@@ -75,15 +96,18 @@ def main():
     # data = response.read() 
     # text = data.decode('utf-8')
     # print (text) # to test
+
+    # line 77 to 81 are for when you want to dowland the file from online
+
     hist = process_file('data/Scarlet Letter.txt', skip_header=True)
     print(hist)
-    # print('Total number of words:', total_words(hist))
-    # print('Number of different words:', different_words(hist))
+    print('Total number of words:', total_words(hist))
+    print('Number of different words:', different_words(hist))
 
-    # t = most_common(hist, excluding_stopwords=True)
-    # print('The most common words are:')
-    # for freq, word in t[0:20]:
-    #     print(word, '\t', freq)
+    l = most_common(hist, excluding_stopwords=True)
+    print('The most common words are:')
+    for freq, word in l[:100]:
+        print(word, '\t', freq)
 
     # words = process_file('words.txt', skip_header=False)
 
